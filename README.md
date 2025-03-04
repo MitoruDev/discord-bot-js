@@ -45,6 +45,41 @@ Ich freue mich über Beiträge und Verbesserungsvorschläge! Wenn du einen Fehle
 
 ## Lizenz
 Dieses Projekt ist unter der MIT-Lizenz lizenziert. Weitere Informationen findest du in der Lizenzdatei.
+services:
+  db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: blog
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    depends_on:
+      - db
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "8080:80"
+
+  php:
+    image: php:8.2-cli
+    volumes:
+      - ./src:/var/www/html
+    depends_on:
+      - db
+    working_dir: /var/www/html
+    command: php -S 0.0.0.0:8000 -t public
+    ports:
+      - "8000:8000"
+    networks:
+      - default
 
 
 
